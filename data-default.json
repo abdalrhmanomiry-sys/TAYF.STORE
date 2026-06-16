@@ -1,0 +1,166 @@
+{
+  "settings": {
+    "storeName": "متجر طيف",
+    "description": "كتب ومنتجات مختارة بعناية.",
+    "email": "store@example.com",
+    "whatsapp": "9639xxxxxxxx",
+    "instagram": "tayf_store",
+    "deliveryNote": "يوجد توصيل إلى جميع المحافظات السورية."
+  },
+  "banners": [
+    {
+      "image": "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1200&q=70",
+      "eyebrow": "متجر طيف",
+      "title": "مكتبة لا تنتهي من المعرفة",
+      "link": "#category/books"
+    },
+    {
+      "image": "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1200&q=70",
+      "eyebrow": "عروض مختارة",
+      "title": "تشكيلة العطور الجديدة",
+      "link": "#category/perfumes"
+    }
+  ],
+  "categories": [
+    {"slug": "books", "name": "كتب"},
+    {"slug": "accessories", "name": "إكسسوارات"},
+    {"slug": "clothing", "name": "ألبسة"},
+    {"slug": "perfumes", "name": "عطورات"},
+    {"slug": "incense", "name": "صمديات"},
+    {"slug": "gifts", "name": "هدايا"},
+    {"slug": "study", "name": "أدوات دراسة"},
+    {"slug": "toys", "name": "ألعاب"},
+    {"slug": "kitchen", "name": "أدوات مطبخ"},
+    {"slug": "silver", "name": "فضة"}
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "كتاب الخيميائي",
+      "category": "books",
+      "prices": {"SYP": 45000, "USD": 9, "TRY": 300},
+      "oldPrices": {"SYP": 60000, "USD": 12, "TRY": 400},
+      "availability": "in",
+      "created": 1735000000000,
+      "views": 420,
+      "description": "رواية عالمية لباولو كويلو عن رحلة تحقيق الحلم الشخصي. نسخة عربية بطباعة فاخرة.",
+      "notes": "الكمية محدودة، والتغليف هدية متاح عند الطلب.",
+      "author": "باولو كويلو",
+      "publisher": "دار الآداب",
+      "pages": 192,
+      "year": 2020,
+      "language": "العربية",
+      "isbn": "9789953701234",
+      "images": [
+        "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=70",
+        "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=70",
+        "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=800&q=70"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "كتاب العادات الذرية",
+      "category": "books",
+      "prices": {"SYP": 55000, "USD": 11, "TRY": 360},
+      "availability": "in",
+      "created": 1734900000000,
+      "views": 610,
+      "description": "دليل عملي لبناء العادات الجيدة من جيمس كلير.",
+      "notes": "",
+      "author": "جيمس كلير",
+      "publisher": "مكتبة جرير",
+      "pages": 320,
+      "year": 2021,
+      "language": "العربية",
+      "images": [
+        "https://images.unsplash.com/photo-1589998059171-988d887df646?auto=format&fit=crop&w=800&q=70"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "قلم فاخر مذهّب",
+      "category": "accessories",
+      "prices": {"SYP": 30000, "USD": 6, "TRY": 200},
+      "availability": "limited",
+      "created": 1734980000000,
+      "views": 150,
+      "description": "قلم حبر معدني بتشطيب ذهبي، مثالي كهدية أو للاستخدام اليومي الأنيق.",
+      "notes": "يأتي بعلبة هدية أنيقة.",
+      "images": [
+        "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&w=800&q=70"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "عطر عود شرقي",
+      "category": "perfumes",
+      "prices": {"SYP": 120000, "USD": 24, "TRY": 790},
+      "oldPrices": {"SYP": 150000, "USD": 30, "TRY": 990},
+      "availability": "in",
+      "created": 1734800000000,
+      "views": 300,
+      "description": "عطر عود فاخر بثبات عالٍ ورائحة شرقية دافئة تدوم طويلاً.",
+      "notes": "حجم 100 مل.",
+      "images": [
+        "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=800&q=70"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "محفظة جلدية",
+      "category": "accessories",
+      "prices": {"SYP": 40000, "USD": 8, "TRY": 260},
+      "availability": "in",
+      "created": 1734990000000,
+      "views": 90,
+      "description": "محفظة جلد طبيعي بتصميم كلاسيكي وجيوب متعددة للبطاقات.",
+      "notes": "",
+      "images": [
+        "https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=70"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "شمعة معطرة",
+      "category": "gifts",
+      "prices": {"SYP": 18000, "USD": 4, "TRY": 120},
+      "availability": "in",
+      "created": 1734700000000,
+      "views": 60,
+      "description": "شمعة معطرة برائحة الفانيليا، مناسبة لإضفاء أجواء هادئة في المنزل.",
+      "notes": "",
+      "images": [
+        "https://images.unsplash.com/photo-1602874801007-bd36c376cd5a?auto=format&fit=crop&w=800&q=70"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "طقم دفاتر دراسية",
+      "category": "study",
+      "prices": {"SYP": 22000, "USD": 5, "TRY": 150},
+      "availability": "in",
+      "created": 1734960000000,
+      "views": 40,
+      "description": "طقم من ثلاثة دفاتر بأغلفة أنيقة وأوراق عالية الجودة.",
+      "notes": "",
+      "images": [
+        "https://images.unsplash.com/photo-1531346878377-a5be20888e57?auto=format&fit=crop&w=800&q=70"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "كوب سيراميك",
+      "category": "kitchen",
+      "prices": {"SYP": 15000, "USD": 3, "TRY": 100},
+      "oldPrices": {"SYP": 20000, "USD": 4, "TRY": 130},
+      "availability": "in",
+      "created": 1734600000000,
+      "views": 75,
+      "description": "كوب سيراميك بتصميم عصري، مناسب للقهوة والشاي.",
+      "notes": "",
+      "images": [
+        "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=800&q=70"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+# إعدادات Netlify لمشروع متجر طيف
+# ====================================
+
+[build]
+  # مجلد النشر (نشر ملفات HTML مباشرة من جذر المشروع)
+  publish = "."
+  # مجلد دوال الخادم (Netlify Functions)
+  functions = "netlify/functions"
+
+# توجيه /api/* إلى Netlify Functions
+[[redirects]]
+  from = "/api/data"
+  to = "/.netlify/functions/data"
+  status = 200
+
+[[redirects]]
+  from = "/api/login"
+  to = "/.netlify/functions/login"
+  status = 200
+
+# منع كاش الـ HTML حتى تظهر التحديثات فوراً
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# إعدادات Netlify Functions
+[functions]
+  node_bundler = "esbuild"

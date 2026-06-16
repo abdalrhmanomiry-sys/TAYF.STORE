@@ -1,0 +1,17 @@
+{
+  "name": "tayf-store",
+  "version": "1.0.0",
+  "description": "متجر طيف - متجر إلكتروني مع لوحة تحكم",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "netlify dev",
+    "start": "netlify dev"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
