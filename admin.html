@@ -807,9 +807,13 @@ function saveProduct(){
   const oSYP=+$("mpOldSYP").value, oUSD=+$("mpOldUSD").value, oTRY=+$("mpOldTRY").value;
   if(oSYP||oUSD||oTRY) p.oldPrices={SYP:oSYP||0,USD:oUSD||0,TRY:oTRY||0};
 
-  ["author","publisher","language","isbn"].forEach(k=>{
-    const v=$("mp"+k[0].toUpperCase()+k.slice(1)).value.trim();
-    if(v) p[k]=v;
+  // ربط أسماء الحقول الـ ID -> اسم الخاصية
+  const bookFields = {mpAuthor:"author", mpPub:"publisher", mpLang:"language", mpIsbn:"isbn"};
+  Object.entries(bookFields).forEach(([id, key])=>{
+    const el = $(id);
+    if(!el) return;
+    const v = (el.value||"").trim();
+    if(v) p[key] = v;
   });
   const pages=+$("mpPages").value; if(pages) p.pages=pages;
   const year=+$("mpYear").value; if(year) p.year=year;
