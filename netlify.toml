@@ -18,6 +18,16 @@
   to = "/.netlify/functions/login"
   status = 200
 
+[[redirects]]
+  from = "/api/upload"
+  to = "/.netlify/functions/upload"
+  status = 200
+
+[[redirects]]
+  from = "/api/image/*"
+  to = "/.netlify/functions/image"
+  status = 200
+
 # منع كاش الـ HTML حتى تظهر التحديثات فوراً
 [[headers]]
   for = "/*.html"
