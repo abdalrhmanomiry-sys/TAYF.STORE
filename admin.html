@@ -362,15 +362,15 @@ kbd{background:var(--elevated);border:1px solid var(--line);border-radius:5px;pa
     <div class="row cols-3" style="margin-top:12px">
       <div>
         <label class="label">السعر الحالي (ل.س) *</label>
-        <input id="mpPriceSYP" type="number" min="0" class="field" placeholder="55000">
+        <input id="mpPriceSYP" type="text" inputmode="decimal" class="field" placeholder="55000">
       </div>
       <div>
         <label class="label">السعر الحالي ($) *</label>
-        <input id="mpPriceUSD" type="number" min="0" step="0.01" class="field" placeholder="11">
+        <input id="mpPriceUSD" type="text" inputmode="decimal" class="field" placeholder="11">
       </div>
       <div>
         <label class="label">السعر الحالي (₺) *</label>
-        <input id="mpPriceTRY" type="number" min="0" class="field" placeholder="360">
+        <input id="mpPriceTRY" type="text" inputmode="decimal" class="field" placeholder="360">
       </div>
     </div>
 
@@ -379,15 +379,15 @@ kbd{background:var(--elevated);border:1px solid var(--line);border-radius:5px;pa
     <div class="row cols-3" style="margin-top:8px">
       <div>
         <label class="label">السعر القديم (ل.س)</label>
-        <input id="mpOldSYP" type="number" min="0" class="field" placeholder="اختياري">
+        <input id="mpOldSYP" type="text" inputmode="decimal" class="field" placeholder="اختياري">
       </div>
       <div>
         <label class="label">السعر القديم ($)</label>
-        <input id="mpOldUSD" type="number" min="0" step="0.01" class="field" placeholder="اختياري">
+        <input id="mpOldUSD" type="text" inputmode="decimal" class="field" placeholder="اختياري">
       </div>
       <div>
         <label class="label">السعر القديم (₺)</label>
-        <input id="mpOldTRY" type="number" min="0" class="field" placeholder="اختياري">
+        <input id="mpOldTRY" type="text" inputmode="decimal" class="field" placeholder="اختياري">
       </div>
     </div>
 
@@ -946,10 +946,68 @@ function bindImageDropzone(){
   });
 }
 
+/**
+ * يحول نص السعر إلى رقم حقيقي.
+ * يقبل:  "45.5"  ·  "45,5"  ·  "45٫5" (فاصلة عربية)
+ *         "1,234.56" (فاصلة آلاف إنجليزية)
+ *         "1.234,56" (فاصلة آلاف أوروبية)
+ *         "١٢٣٤٫٥" (أرقام عربية)
+ * يعيد 0 للصيغ الغير صالحة.
+ */
+function parsePrice(input){
+  if(input == null) return 0;
+  let s = String(input).trim();
+  if(!s) return 0;
+  // تحويل الأرقام العربية/الفارسية إلى إنجليزية
+  s = s.replace(/[٠-٩]/g, d => String.fromCharCode(d.charCodeAt(0)-0x0660+0x30))
+       .replace(/[۰-۹]/g, d => String.fromCharCode(d.charCodeAt(0)-0x06F0+0x30));
+  // توحيد الفواصل العربية والفارسية إلى فاصلة لاتينية عادية
+  s = s.replace(/[٫٬]/g, ",");
+  // حذف أي رمز غير رقم/فاصلة/نقطة (عملات، فراغات، إلخ)
+  s = s.replace(/[^\d.,\-]/g, "");
+  if(!s) return 0;
+
+  const lastDot = s.lastIndexOf(".");
+  const lastCom = s.lastIndexOf(",");
+  // تحديد الفاصل العشري (الأخير بين النقطة/الفاصلة)
+  let decSep = "";
+  if(lastDot !== -1 && lastCom !== -1){
+    // إذا وجد كلاهما → الأخير هو العشري (مثل: 1,234.56  أو  1.234,56)
+    decSep = (lastDot > lastCom) ? "." : ",";
+  } else if(lastDot !== -1 || lastCom !== -1){
+    // فاصل واحد فقط → التمييز حسب عدد الأرقام بعده:
+    // 3 أرقام تماماً → فاصل آلاف (مثل: 45,000 أو 1.234)
+    // غير ذلك → فاصل عشري (مثل: 12.5 أو 12,5)
+    const sep = (lastDot !== -1) ? "." : ",";
+    const idx = (lastDot !== -1) ? lastDot : lastCom;
+    const count = (s.match(new RegExp("\\" + sep, "g")) || []).length;
+    const after = s.length - idx - 1;
+    if(count > 1){
+      // عدة فواصل من نفس النوع → كلها آلاف (مثل: 1,234,567)
+      decSep = "";
+    } else if(after === 3){
+      // فاصل واحد + 3 أرقام بعده → فاصل آلاف
+      decSep = "";
+    } else {
+      decSep = sep;
+    }
+  }
+  // حذف فواصل الآلاف، واستبدال الفاصل العشري بنقطة
+  if(decSep === "."){
+    s = s.replace(/,/g, "");
+  } else if(decSep === ","){
+    s = s.replace(/\./g, "").replace(",", ".");
+  } else {
+    s = s.replace(/[.,]/g, "");
+  }
+  const n = parseFloat(s);
+  return isFinite(n) && n >= 0 ? n : 0;
+}
+
 function saveProduct(){
   const name=$("mpName").value.trim();
   const category=$("mpCategory").value;
-  const sSYP=+$("mpPriceSYP").value, sUSD=+$("mpPriceUSD").value, sTRY=+$("mpPriceTRY").value;
+  const sSYP=parsePrice($("mpPriceSYP").value), sUSD=parsePrice($("mpPriceUSD").value), sTRY=parsePrice($("mpPriceTRY").value);
   if(!name){ toast("اسم المنتج مطلوب","error"); return; }
   if(!category){ toast("اختر القسم","error"); return; }
   if(!sSYP&&!sUSD&&!sTRY){ toast("أدخل سعراً واحداً على الأقل","error"); return; }
@@ -966,7 +1024,7 @@ function saveProduct(){
     images: mpImages.slice(),
     created: editingProductId ? (DATA.products.find(x=>x.id===editingProductId)?.created || Date.now()) : Date.now()
   };
-  const oSYP=+$("mpOldSYP").value, oUSD=+$("mpOldUSD").value, oTRY=+$("mpOldTRY").value;
+  const oSYP=parsePrice($("mpOldSYP").value), oUSD=parsePrice($("mpOldUSD").value), oTRY=parsePrice($("mpOldTRY").value);
   if(oSYP||oUSD||oTRY) p.oldPrices={SYP:oSYP||0,USD:oUSD||0,TRY:oTRY||0};
 
   // ربط أسماء الحقول الـ ID -> اسم الخاصية
@@ -1292,5 +1350,6 @@ document.querySelectorAll(".modal-bg").forEach(m=>{
   }
 })();
 </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
