@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <link rel="icon" type="image/jpeg" href="favicon.jpg">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>متجر طيف</title>
@@ -232,7 +231,7 @@ async function loadData(){
    منطق المتجر
    ============================================================ */
 const CUR = [["SYP","ل.س"],["USD","$"],["TRY","₺"]];
-const fmtN = v => new Intl.NumberFormat("ar-SY",{maximumFractionDigits:0}).format(v||0);
+const fmtN = v => new Intl.NumberFormat("ar-SY",{maximumFractionDigits:2}).format(v||0);
 const money = (v,c) => fmtN(v)+" "+(({SYP:"ل.س",USD:"$",TRY:"₺"})[c]||c);
 const catName = s => (CATEGORIES.find(c=>c.slug===s)||{}).name || "";
 const availText = a => a==="in"?"متوفر":a==="limited"?"كمية محدودة":"غير متوفر";
@@ -585,5 +584,6 @@ document.getElementById("searchInput").addEventListener("input",e=>{
   route();
 })();
 </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
