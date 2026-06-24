@@ -105,6 +105,19 @@ td .row-actions{display:flex;gap:6px;flex-wrap:wrap}
 .img-add{display:flex;gap:6px;margin-top:10px}
 .img-add input{flex:1}
 
+/* منطقة رفع الصور (Drop Zone) */
+.dropzone{margin-top:12px;border:2px dashed var(--line);border-radius:14px;padding:22px 16px;text-align:center;background:rgba(201,162,75,.04);transition:.2s;cursor:pointer}
+.dropzone:hover,.dropzone.drag-over{border-color:var(--gold);background:rgba(201,162,75,.10)}
+.dropzone .dz-content{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.dropzone .dz-icon{font-size:34px;line-height:1}
+.dropzone .dz-text{text-align:start}
+.dropzone .dz-progress{margin-top:14px}
+.dropzone .dz-progress-text{font-size:13px;color:var(--gold);margin-bottom:6px;font-weight:700}
+.dropzone .dz-progress-bar{height:6px;border-radius:999px;background:var(--elevated);overflow:hidden}
+.dropzone .dz-progress-bar>div{height:100%;background:linear-gradient(to left,var(--gold),var(--gold-soft));transition:width .25s;width:0%}
+.img-tile.uploading{opacity:.5;position:relative}
+.img-tile.uploading::after{content:"⏳";position:absolute;inset:0;display:grid;place-items:center;font-size:24px;background:rgba(0,0,0,.5);color:#fff}
+
 /* Banners + categories grid */
 .draggable{cursor:move}
 .item-box{background:var(--elevated);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
@@ -420,12 +433,33 @@ kbd{background:var(--elevated);border:1px solid var(--line);border-radius:5px;pa
     </div>
 
     <h3 style="margin-top:18px;color:var(--gold);font-size:15px">🖼️ الصور</h3>
-    <div class="hint">يمكنك إضافة صورة أو أكثر عبر روابط (URL). أول صورة هي الرئيسية. استخدم خدمات مثل <a href="https://imgbb.com" target="_blank">imgbb.com</a> أو <a href="https://postimages.org" target="_blank">postimages.org</a> لرفع الصور والحصول على رابط مجاناً.</div>
+    <div class="hint">أول صورة هي الرئيسية. يمكنك رفع صور مباشرة من جهازك، أو سحبها وإفلاتها، أو لصق رابط. 💯 الصور تُضغط تلقائياً لتسريع التحميل.</div>
     <div class="images-list" id="mpImagesList"></div>
-    <div class="img-add">
-      <input id="mpImgInput" class="field" dir="ltr" placeholder="https://...صورة.jpg">
-      <button class="btn btn-ghost" onclick="addProductImage()">+ إضافة صورة</button>
+
+    <!-- منطقة السحب والإفلات + زر اختيار ملف -->
+    <div id="mpDropZone" class="dropzone">
+      <input type="file" id="mpFileInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple style="display:none">
+      <div class="dz-content">
+        <div class="dz-icon">📁</div>
+        <div class="dz-text">
+          <button type="button" class="btn btn-gold btn-sm" onclick="document.getElementById('mpFileInput').click()">اختر صورة من جهازك</button>
+          <div style="margin-top:6px;font-size:13px;color:var(--muted)">أو اسحب وأفلت الصور هنا · يدعم الرفع المتعدد</div>
+        </div>
+      </div>
+      <div id="mpUploadProgress" class="dz-progress" style="display:none">
+        <div class="dz-progress-text">جارٍ الرفع...</div>
+        <div class="dz-progress-bar"><div id="mpUploadBarFill"></div></div>
+      </div>
     </div>
+
+    <!-- خيار لصق رابط (اختياري) -->
+    <details style="margin-top:10px">
+      <summary style="cursor:pointer;color:var(--muted);font-size:13px">↗️ أو أضف صورة عبر رابط خارجي (URL)</summary>
+      <div class="img-add" style="margin-top:8px">
+        <input id="mpImgInput" class="field" dir="ltr" placeholder="https://...صورة.jpg">
+        <button type="button" class="btn btn-ghost" onclick="addProductImage()">+ إضافة رابط</button>
+      </div>
+    </details>
 
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeProductModal()">إلغاء</button>
@@ -784,6 +818,134 @@ function addProductImage(){
 }
 function removeProductImage(i){ mpImages.splice(i,1); renderProductImages(); }
 
+/* =====================================================
+   رفع الصور مباشرة من الجهاز (مع ضغط تلقائي)
+   ===================================================== */
+const MAX_IMAGE_DIM = 1600;       // أقصى عرض/ارتفاع بعد الضغط
+const COMPRESS_QUALITY = 0.85;    // جودة JPEG (0-1)
+const MAX_FILE_SIZE_MB = 10;      // الحد الأقصى للملف الأصلي
+const ALLOWED_MIMES = ["image/jpeg","image/png","image/webp","image/gif"];
+
+/** يضغط الصورة في المتصفّح عبر canvas. يتجاوز GIF (يبقى كما هو للحفاظ على الحركة) */
+async function compressImage(file){
+  if(file.type === "image/gif") return file;
+  const dataUrl = await new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = e => res(e.target.result);
+    r.onerror = () => rej(new Error("تعذّر قراءة الملف"));
+    r.readAsDataURL(file);
+  });
+  const img = await new Promise((res,rej)=>{
+    const im = new Image();
+    im.onload = ()=>res(im);
+    im.onerror = ()=>rej(new Error("تعذّر تحميل الصورة"));
+    im.src = dataUrl;
+  });
+  let { width: w, height: h } = img;
+  const ratio = Math.min(MAX_IMAGE_DIM/w, MAX_IMAGE_DIM/h, 1);
+  w = Math.round(w*ratio); h = Math.round(h*ratio);
+  const canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, w, h);
+  const outType = (file.type === "image/png" || file.type === "image/webp") ? file.type : "image/jpeg";
+  const blob = await new Promise(res => canvas.toBlob(res, outType, COMPRESS_QUALITY));
+  if(!blob) throw new Error("فشل ضغط الصورة");
+  return blob;
+}
+
+/** يرفع صورة واحدة للخادم ويعيد URL */
+async function uploadImageBlob(blob){
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    headers: {
+      "Content-Type": blob.type || "image/jpeg",
+      "Authorization": "Bearer " + token
+    },
+    body: blob
+  });
+  const j = await res.json().catch(()=>({error:"استجابة غير صالحة من الخادم"}));
+  if(!res.ok) throw new Error(j.error || ("HTTP "+res.status));
+  return j.url;
+}
+
+/** يعالج مجموعة ملفات (ضغط + رفع + إضافة للقائمة) */
+async function processFiles(fileList){
+  const files = Array.from(fileList).filter(f=>{
+    if(!ALLOWED_MIMES.includes(f.type)){
+      toast("تم تجاهل ملف غير مدعوم: "+f.name,"error");
+      return false;
+    }
+    if(f.size > MAX_FILE_SIZE_MB*1024*1024){
+      toast(`"${f.name}" أكبر من ${MAX_FILE_SIZE_MB}MB — تم تجاهله`,"error");
+      return false;
+    }
+    return true;
+  });
+  if(!files.length) return;
+
+  const progressWrap = $("mpUploadProgress");
+  const progressBar = $("mpUploadBarFill");
+  const progressText = progressWrap.querySelector(".dz-progress-text");
+  progressWrap.style.display = "block";
+
+  let done = 0, failed = 0;
+  for(const file of files){
+    progressText.textContent = `جارٍ رفع ${done+1} من ${files.length}… (${file.name})`;
+    progressBar.style.width = Math.round((done/files.length)*100)+"%";
+    try{
+      const blob = await compressImage(file);
+      const url = await uploadImageBlob(blob);
+      mpImages.push(url);
+      renderProductImages();
+    }catch(e){
+      console.error("upload failed", file.name, e);
+      toast(`فشل رفع ${file.name}: ${e.message||e}`,"error");
+      failed++;
+    }
+    done++;
+  }
+  progressBar.style.width = "100%";
+  setTimeout(()=>{
+    progressWrap.style.display = "none";
+    progressBar.style.width = "0%";
+  }, 600);
+  const ok = done - failed;
+  if(ok>0) toast(`✓ تم رفع ${ok} صورة${failed?` (فشل ${failed})`:""}`,"success");
+}
+
+/** يربط مدخل الملف ومنطقة السحب */
+function bindImageDropzone(){
+  const dz = $("mpDropZone");
+  const fi = $("mpFileInput");
+  if(!dz || !fi || dz._bound) return;
+  dz._bound = true;
+
+  fi.addEventListener("change", async e=>{
+    if(e.target.files && e.target.files.length){
+      await processFiles(e.target.files);
+      fi.value = "";
+    }
+  });
+
+  ["dragenter","dragover"].forEach(ev=>{
+    dz.addEventListener(ev, e=>{ e.preventDefault(); e.stopPropagation(); dz.classList.add("drag-over"); });
+  });
+  ["dragleave","drop"].forEach(ev=>{
+    dz.addEventListener(ev, e=>{ e.preventDefault(); e.stopPropagation(); dz.classList.remove("drag-over"); });
+  });
+  dz.addEventListener("drop", async e=>{
+    if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length){
+      await processFiles(e.dataTransfer.files);
+    }
+  });
+
+  dz.addEventListener("click", e=>{
+    if(e.target.tagName === "BUTTON") return;
+    fi.click();
+  });
+}
+
 function saveProduct(){
   const name=$("mpName").value.trim();
   const category=$("mpCategory").value;
@@ -1123,6 +1285,7 @@ document.querySelectorAll(".modal-bg").forEach(m=>{
    ===================================================== */
 (async function init(){
   bindSettings();
+  bindImageDropzone();
   if(!(await autoLogin())){
     $("loginScreen").style.display="grid";
     $("appScreen").style.display="none";
