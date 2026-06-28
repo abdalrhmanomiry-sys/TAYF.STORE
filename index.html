@@ -231,6 +231,8 @@ async function loadData(){
    منطق المتجر
    ============================================================ */
 const CUR = [["SYP","ل.س"],["USD","$"],["TRY","₺"]];
+/* العملة الأساسية للعرض في بطاقات المنتجات، السلة، ورسالة الواتساب */
+const PRIMARY = "USD";
 const fmtN = v => new Intl.NumberFormat("ar-SY",{maximumFractionDigits:2}).format(v||0);
 const money = (v,c) => fmtN(v)+" "+(({SYP:"ل.س",USD:"$",TRY:"₺"})[c]||c);
 const catName = s => (CATEGORIES.find(c=>c.slug===s)||{}).name || "";
@@ -330,14 +332,14 @@ function getList(mode, slug){
   if(mode==="new") list=list.filter(isNew);
   if(state.q){ const q=state.q.trim();
     list=list.filter(p=>p.name.includes(q)||(p.description||"").includes(q)||(p.author||"").includes(q)); }
-  if(state.sort==="price_asc") list.sort((a,b)=>a.prices.SYP-b.prices.SYP);
-  else if(state.sort==="price_desc") list.sort((a,b)=>b.prices.SYP-a.prices.SYP);
+  if(state.sort==="price_asc") list.sort((a,b)=>(a.prices[PRIMARY]||0)-(b.prices[PRIMARY]||0));
+  else if(state.sort==="price_desc") list.sort((a,b)=>(b.prices[PRIMARY]||0)-(a.prices[PRIMARY]||0));
   else if(state.sort==="views") list.sort((a,b)=>(b.views||0)-(a.views||0));
   else list.sort((a,b)=>b.created-a.created);
   return list;
 }
 function cardHTML(p){
-  const offer=p.oldPrices&&p.oldPrices.SYP>p.prices.SYP;
+  const offer=p.oldPrices && (p.oldPrices[PRIMARY]||0) > (p.prices[PRIMARY]||0);
   const img = (p.images&&p.images[0])||"";
   return `<article class="card">
     <div class="thumb" onclick="go('product/${p.id}')">
@@ -349,7 +351,7 @@ function cardHTML(p){
       <div class="cat" onclick="navTo('category/${p.category}')">${catName(p.category)}</div>
       <div class="name" onclick="go('product/${p.id}')">${p.name}</div>
       ${p.author?`<div class="author">${p.author}</div>`:''}
-      <div class="price"><b>${money(p.prices.SYP,"SYP")}</b>${offer?`<s>${money(p.oldPrices.SYP,"SYP")}</s>`:''}</div>
+      <div class="price"><b>${money(p.prices[PRIMARY],PRIMARY)}</b>${offer?`<s>${money(p.oldPrices[PRIMARY],PRIMARY)}</s>`:''}</div>
       <div class="add">${p.availability==="out"
         ?'<button class="btn btn-ghost" disabled>غير متوفر</button>'
         :`<button class="btn btn-outline" onclick="addToCart(${p.id},1);toast('أُضيف إلى السلة')">+ أضف للسلة</button>`}</div>
@@ -386,12 +388,15 @@ function renderProduct(id){
   const p=byId(id);
   if(!p){ document.getElementById("app").innerHTML='<div class="empty">المنتج غير موجود.</div>'; return; }
   gImg=0;
-  const offer=p.oldPrices&&p.oldPrices.SYP>p.prices.SYP;
+  const offer=p.oldPrices && (p.oldPrices[PRIMARY]||0) > (p.prices[PRIMARY]||0);
   const isBook=p.author||p.publisher||p.pages||p.year;
   const imgs = p.images && p.images.length ? p.images : [""];
-  const pricesRows = CUR.map(([c,sym])=>`
+  // إخفاء صفوف العملات التي قيمتها 0
+  const pricesRows = CUR
+    .filter(([c]) => (p.prices[c]||0) > 0)
+    .map(([c,sym])=>`
     <div class="pr"><span class="cur">${({SYP:'الليرة السورية',USD:'الدولار الأمريكي',TRY:'الليرة التركية'})[c]}</span>
-    <span class="val">${money(p.prices[c],c)}${offer&&p.oldPrices[c]?`<s>${money(p.oldPrices[c],c)}</s>`:''}</span></div>`).join("");
+    <span class="val">${money(p.prices[c],c)}${offer&&p.oldPrices&&p.oldPrices[c]?`<s>${money(p.oldPrices[c],c)}</s>`:''}</span></div>`).join("");
   document.getElementById("app").innerHTML = `
     <div class="crumb"><a onclick="go('')">الرئيسية</a><span>/</span>
       <a onclick="navTo('category/${p.category}')">${catName(p.category)}</a><span>/</span>
@@ -463,11 +468,11 @@ function renderCart(){
       <img src="${p.images[0]}" alt="${p.name}" onclick="go('product/${p.id}')" style="cursor:pointer">
       <div class="ci-body">
         <div class="ci-name">${p.name}</div>
-        <div class="avail" style="margin:3px 0">${money(p.prices.SYP,"SYP")} · للقطعة</div>
+        <div class="avail" style="margin:3px 0">${money(p.prices[PRIMARY],PRIMARY)} · للقطعة</div>
         <div class="qty"><button onclick="cartStep(${p.id},-1)">−</button><span>${q}</span><button onclick="cartStep(${p.id},1)">+</button></div>
       </div>
       <div style="text-align:end">
-        <div style="font-weight:700">${money(p.prices.SYP*q,"SYP")}</div>
+        <div style="font-weight:700">${money((p.prices[PRIMARY]||0)*q,PRIMARY)}</div>
         <button class="link-remove" onclick="cartRemove(${p.id})">حذف</button>
       </div></div>`;
   }).join("");
@@ -478,16 +483,12 @@ function renderCart(){
       <div>
         ${rows}
         <div class="cart-totals">
-          <div class="t-row"><span>الإجمالي (ل.س)</span><span>${money(t.SYP,"SYP")}</span></div>
-          <div class="t-row"><span>الإجمالي ($)</span><span>${money(t.USD,"USD")}</span></div>
-          <div class="t-row big"><span>الإجمالي (₺)</span><span>${money(t.TRY,"TRY")}</span></div>
+          ${CUR.filter(([c])=>(t[c]||0)>0).map(([c],i,arr)=>`
+            <div class="t-row ${i===arr.length-1?'big':''}"><span>الإجمالي (${({SYP:'ل.س',USD:'$',TRY:'₺'})[c]})</span><span>${money(t[c],c)}</span></div>
+          `).join('')}
         </div>
         <div class="cart-totals">
-          <div class="row">
-            <div><label class="label">الاسم</label><input class="field" id="cName" placeholder="اسمك"></div>
-            <div><label class="label">رقم الهاتف</label><input class="field" id="cPhone" dir="ltr" placeholder="09xxxxxxxx"></div>
-          </div>
-          <div style="margin-top:10px"><label class="label">ملاحظات</label><textarea class="field" id="cNotes" rows="2" placeholder="اختياري"></textarea></div>
+          <div style="margin-top:0"><label class="label">ملاحظات (اختياري)</label><textarea class="field" id="cNotes" rows="2" placeholder="أي ملاحظات إضافية..."></textarea></div>
           <div id="cErr" style="color:#dc2626;font-size:13px;margin-top:8px"></div>
           <button class="btn btn-wa" style="width:100%;margin-top:12px" onclick="checkout()">إتمام الطلب عبر واتساب</button>
           <p style="text-align:center;color:var(--gold);font-weight:700;margin-top:10px">${SETTINGS.deliveryNote||""}</p>
@@ -499,21 +500,51 @@ function renderCart(){
 function cartStep(id,d){ const q=(cart[id]||0)+d; setQty(id,q); renderCart(); }
 function cartRemove(id){ delete cart[id]; saveCart(); renderCart(); }
 function checkout(){
-  const name=(document.getElementById("cName").value||"").trim();
-  const phone=(document.getElementById("cPhone").value||"").trim();
   const notes=(document.getElementById("cNotes").value||"").trim();
   const err=document.getElementById("cErr");
-  if(name.length<2){err.textContent="الرجاء إدخال الاسم";return;}
-  if(phone.length<6){err.textContent="الرجاء إدخال رقم هاتف صحيح";return;}
   if(!SETTINGS.whatsapp){ err.textContent="لم يتم ضبط رقم واتساب المتجر"; return; }
-  const t=cartTotals();
-  const lines=["🛒 طلب جديد من "+SETTINGS.storeName,""];
-  for(const id in cart){ const p=byId(+id); if(!p) continue;
-    lines.push(`• ${p.name} ×${cart[id]} — ${money(p.prices.SYP*cart[id],"SYP")}`); }
-  lines.push("", "الإجمالي:", money(t.SYP,"SYP")+" / "+money(t.USD,"USD")+" / "+money(t.TRY,"TRY"),
-    "", "الاسم: "+name, "الهاتف: "+phone);
-  if(notes) lines.push("ملاحظات: "+notes);
-  if(SETTINGS.deliveryNote) lines.push("", SETTINGS.deliveryNote);
+  const ids = Object.keys(cart).filter(id => byId(+id));
+  if(!ids.length){ err.textContent="السلة فارغة"; return; }
+  const t = cartTotals();
+
+  /* بناء رسالة واتساب مرتّبة وودودة */
+  const lines = [];
+  lines.push(`السلام عليكم ورحمة الله 🌹`);
+  lines.push(`مرحباً ${SETTINGS.storeName} 👋`);
+  lines.push("");
+  lines.push("أرغب بطلب المنتجات التالية:");
+  lines.push("");
+
+  for(const id of ids){
+    const p = byId(+id); const q = cart[id];
+    const unit = p.prices[PRIMARY] || 0;
+    const total = unit * q;
+    lines.push(`🛍 ـ ${p.name}`);
+    lines.push(`     الكمية: ${q} × ${money(unit, PRIMARY)} = ${money(total, PRIMARY)}`);
+    lines.push("");
+  }
+
+  lines.push("━━━━━━━━━━━━━");
+  /* الإجمالي بالعملة الأساسية */
+  lines.push(`الإجمالي: ${money(t[PRIMARY], PRIMARY)}`);
+  /* إضافة باقي العملات فقط إذا كانت > 0 */
+  CUR.forEach(([c])=>{
+    if(c !== PRIMARY && (t[c]||0) > 0){
+      lines.push(`ما يعادل: ${money(t[c], c)}`);
+    }
+  });
+  lines.push("");
+
+  if(notes){
+    lines.push(`ملاحظات: ${notes}`);
+    lines.push("");
+  }
+  if(SETTINGS.deliveryNote){
+    lines.push(SETTINGS.deliveryNote);
+    lines.push("");
+  }
+  lines.push("شكراً لكم 🌹");
+
   window.open("https://wa.me/"+SETTINGS.whatsapp+"?text="+encodeURIComponent(lines.join("\n")),"_blank");
 }
 
