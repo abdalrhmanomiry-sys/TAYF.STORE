@@ -233,7 +233,7 @@ async function loadData(){
 const CUR = [["SYP","ل.س"],["USD","$"],["TRY","₺"]];
 /* العملة الأساسية للعرض في بطاقات المنتجات، السلة، ورسالة الواتساب */
 const PRIMARY = "USD";
-const fmtN = v => new Intl.NumberFormat("ar-SY",{maximumFractionDigits:2}).format(v||0);
+const fmtN = v => new Intl.NumberFormat("en-US",{maximumFractionDigits:2}).format(v||0);
 const money = (v,c) => fmtN(v)+" "+(({SYP:"ل.س",USD:"$",TRY:"₺"})[c]||c);
 const catName = s => (CATEGORIES.find(c=>c.slug===s)||{}).name || "";
 const availText = a => a==="in"?"متوفر":a==="limited"?"كمية محدودة":"غير متوفر";
@@ -507,45 +507,24 @@ function checkout(){
   if(!ids.length){ err.textContent="السلة فارغة"; return; }
   const t = cartTotals();
 
-  /* بناء رسالة واتساب مرتّبة وودودة */
+  /* بناء رسالة واتساب مختصرة */
   const lines = [];
-  lines.push(`السلام عليكم ورحمة الله 🌹`);
-  lines.push(`مرحباً ${SETTINGS.storeName} 👋`);
-  lines.push("");
-  lines.push("أرغب بطلب المنتجات التالية:");
+  lines.push("السلام عليكم ورحمة الله وبركاته");
   lines.push("");
 
   for(const id of ids){
     const p = byId(+id); const q = cart[id];
     const unit = p.prices[PRIMARY] || 0;
-    const total = unit * q;
-    lines.push(`🛍 ـ ${p.name}`);
-    lines.push(`     الكمية: ${q} × ${money(unit, PRIMARY)} = ${money(total, PRIMARY)}`);
-    lines.push("");
-  }
-
-  lines.push("━━━━━━━━━━━━━");
-  /* الإجمالي بالعملة الأساسية */
-  lines.push(`الإجمالي: ${money(t[PRIMARY], PRIMARY)}`);
-  /* إضافة باقي العملات فقط إذا كانت > 0 */
-  CUR.forEach(([c])=>{
-    if(c !== PRIMARY && (t[c]||0) > 0){
-      lines.push(`ما يعادل: ${money(t[c], c)}`);
+    lines.push(`مهتم بـ منتج ${p.name}`);
+    lines.push(`السعر: ${money(unit, PRIMARY)}`);
+    if(q > 1){
+      const total = unit * q;
+      lines.push(`السعر الإجمالي (${q} قطع): ${money(total, PRIMARY)}`);
     }
-  });
-  lines.push("");
-
-  if(notes){
-    lines.push(`ملاحظات: ${notes}`);
     lines.push("");
   }
-  if(SETTINGS.deliveryNote){
-    lines.push(SETTINGS.deliveryNote);
-    lines.push("");
-  }
-  lines.push("شكراً لكم 🌹");
 
-  window.open("https://wa.me/"+SETTINGS.whatsapp+"?text="+encodeURIComponent(lines.join("\n")),"_blank");
+  window.open("https://wa.me/"+SETTINGS.whatsapp+"?text="+encodeURIComponent(lines.join("\n").trim()),"_blank");
 }
 
 let toastTimer=null;
