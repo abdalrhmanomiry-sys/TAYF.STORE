@@ -1,0 +1,12 @@
+# robots.txt — متجر طيف
+# يسمح لجميع محرّكات البحث بزحف الموقع
+
+User-agent: *
+Allow: /
+
+# حماية لوحة التحكم من الفهرسة (ليست للعموم)
+Disallow: /admin.html
+Disallow: /api/
+
+# خريطة الموقع
+Sitemap: https://tayfstore.netlify.app/sitemap.xml
