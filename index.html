@@ -3,8 +3,98 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>متجر طيف</title>
-<meta name="description" content="متجر طيف — كتب ومنتجات مختارة، واطلب بسهولة عبر واتساب." />
+
+<!-- ============================================================
+     SEO Meta Tags (محرّكات البحث)
+     ============================================================ -->
+<title>متجر طيف | Tayf Store - كتب وعطورات وإكسسوارات مختارة</title>
+<meta name="description" content="متجر طيف - تشكيلة فاخرة من الكتب، العطورات، الإكسسوارات، والهدايا المختارة بعناية. أسعار مميّزة، توصيل لكل المحافظات، والطلب بسهولة عبر واتساب." />
+<meta name="keywords" content="متجر طيف, طيف ستور, Tayf, Tayf Store, متجر إلكتروني, كتب, عطور, عطورات, إكسسوارات, هدايا, صمديات, أدوات دراسة, فضة, ألعاب, أدوات مطبخ, تسوق أون لاين, توصيل سوريا, تسوق سوريا, واتساب شوبنق" />
+<meta name="author" content="متجر طيف" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+<meta name="googlebot" content="index, follow" />
+<meta name="language" content="Arabic" />
+<meta name="theme-color" content="#c9a24b" />
+<meta name="format-detection" content="telephone=yes" />
+<link rel="canonical" href="https://tayfstore.netlify.app/" />
+
+<!-- ============================================================
+     Favicons & PWA Icons
+     ============================================================ -->
+<link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96x96.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<!-- ============================================================
+     Open Graph (Facebook, WhatsApp, LinkedIn عند مشاركة الرابط)
+     ============================================================ -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="متجر طيف" />
+<meta property="og:title" content="متجر طيف | Tayf Store - كتب وعطورات وإكسسوارات مختارة" />
+<meta property="og:description" content="تشكيلة فاخرة من الكتب، العطورات، الإكسسوارات والهدايا المختارة بعناية. اطلب بسهولة عبر واتساب." />
+<meta property="og:url" content="https://tayfstore.netlify.app/" />
+<meta property="og:image" content="https://tayfstore.netlify.app/assets/og-image.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="شعار متجر طيف - Tayf Store" />
+<meta property="og:locale" content="ar_AR" />
+
+<!-- ============================================================
+     Twitter Card (عند مشاركة الرابط على تويتر/X)
+     ============================================================ -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="متجر طيف | Tayf Store" />
+<meta name="twitter:description" content="تشكيلة فاخرة من الكتب، العطورات، الإكسسوارات والهدايا المختارة بعناية." />
+<meta name="twitter:image" content="https://tayfstore.netlify.app/assets/og-image.jpg" />
+
+<!-- ============================================================
+     Schema.org Structured Data (يساعد Google على فهم المتجر)
+     ============================================================ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "name": "متجر طيف",
+  "alternateName": "Tayf Store",
+  "url": "https://tayfstore.netlify.app/",
+  "logo": "https://tayfstore.netlify.app/assets/logo.png",
+  "image": "https://tayfstore.netlify.app/assets/og-image.jpg",
+  "description": "متجر إلكتروني متخصّص بالكتب، العطورات، الإكسسوارات، والهدايا المختارة بعناية.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "SY"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Syria"
+  },
+  "sameAs": [
+    "https://instagram.com/tayf_store"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "متجر طيف",
+  "alternateName": "Tayf Store",
+  "url": "https://tayfstore.netlify.app/",
+  "inLanguage": "ar",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://tayfstore.netlify.app/#search/{search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- ============================================================
+     الخطوط والتنسيق
+     ============================================================ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
@@ -594,6 +684,6 @@ document.getElementById("searchInput").addEventListener("input",e=>{
   route();
 })();
 </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
