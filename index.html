@@ -154,10 +154,13 @@ header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 8
 .chip.active{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
 
 .banner-area{margin-bottom:18px}
-.banner{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);min-height:200px}
+.banner{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);min-height:200px;cursor:pointer}
 .banner img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .banner .ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,12,.8),transparent)}
 .banner .txt{position:relative;padding:40px 28px;color:#fff;min-height:200px;display:flex;flex-direction:column;justify-content:flex-end}
+/* شرائح البانر (محمّلة مسبقاً — يمنع الاختفاء) */
+.banner-slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease;pointer-events:none}
+.banner-slide.active{opacity:1;pointer-events:auto}
 .banner .ey{color:var(--gold-soft);font-weight:700;font-size:12px;letter-spacing:.18em;text-transform:uppercase}
 .banner h2{font-size:clamp(22px,4vw,38px);margin:8px 0;color:#fff}
 .banner.empty{background:linear-gradient(120deg,#161618,#0b0b0c)}
@@ -397,22 +400,31 @@ function bannerHTML(){
       <div class="ey">${SETTINGS.storeName||""}</div>
       <h2>${SETTINGS.description||"أهلاً بك"}</h2></div></div></div>`;
   }
+  // نبني كل الشرائح مرّة واحدة في DOM — التبديل يكون بفأ CSS فقط
+  const slides = BANNERS.map((b, i) => `
+    <div class="banner-slide ${i===0?'active':''}" data-idx="${i}">
+      <img src="${b.image||""}" alt="" loading="${i===0?'eager':'lazy'}" onerror="this.style.display='none'">
+      <div class="ov"></div>
+      <div class="txt">
+        ${b.eyebrow ? `<div class="ey">${b.eyebrow}</div>` : ''}
+        ${b.title ? `<h2>${b.title}</h2>` : ''}
+      </div>
+    </div>`).join('');
   const dots = BANNERS.length>1 ? `<div class="banner-dots">${BANNERS.map((_,i)=>`<i class="${i===0?'active':''}" onclick="showBanner(${i})"></i>`).join("")}</div>`:"";
   return `<div class="banner-area">
-    <div class="banner" id="bannerBox" onclick="bannerClick()"></div>${dots}</div>`;
+    <div class="banner" id="bannerBox" onclick="bannerClick()">${slides}</div>${dots}</div>`;
 }
 function renderBanner(){
-  const box=document.getElementById("bannerBox"); if(!box) return;
-  const b=BANNERS[bannerIdx]; if(!b) return;
-  box.innerHTML = `<img src="${b.image||""}" alt=""><div class="ov"></div>
-    <div class="txt">${b.eyebrow?`<div class="ey">${b.eyebrow}</div>`:''}
-    ${b.title?`<h2>${b.title}</h2>`:''}</div>`;
+  const slides = document.querySelectorAll(".banner-slide");
+  if(!slides.length) return;
+  slides.forEach((s, i) => s.classList.toggle("active", i === bannerIdx));
   document.querySelectorAll(".banner-dots i").forEach((d,i)=>d.classList.toggle("active",i===bannerIdx));
 }
-function showBanner(i){ bannerIdx=i; renderBanner(); }
+function showBanner(i){ bannerIdx=i; renderBanner(); startBanner(); }
 function bannerClick(){ const b=BANNERS[bannerIdx]; if(b&&b.link) location.hash=b.link.replace(/^#/,"#"); }
+function stopBanner(){ clearInterval(bannerTimer); bannerTimer=null; }
 function startBanner(){
-  clearInterval(bannerTimer);
+  stopBanner();
   if(BANNERS.length>1){ bannerTimer=setInterval(()=>{ bannerIdx=(bannerIdx+1)%BANNERS.length; renderBanner(); },5000); }
 }
 
@@ -642,6 +654,8 @@ function renderFooter(){
 
 function route(){
   toggleSidebar(false);
+  // إيقاف مؤقّت البانر قبل أي توجيه (يمنع تراكم المؤقّتات)
+  stopBanner();
   const h=location.hash.replace(/^#/,"");
   let active="";
   if(h.startsWith("category/")) active=h.split("/")[1];
