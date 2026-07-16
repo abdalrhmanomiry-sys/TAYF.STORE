@@ -15,6 +15,8 @@ import { dirname, join } from "node:path";
 
 const STORE_NAME = "tayf-store-data";
 const KEY = "store.json";
+const BACKUP_KEY = "store.backup.latest.json";
+const PREV_BACKUP_KEY = "store.backup.previous.json";
 
 // رؤوس CORS عامة
 const CORS_HEADERS = {
@@ -51,7 +53,8 @@ async function loadDefaults() {
       email: "",
       whatsapp: "",
       instagram: "",
-      deliveryNote: "يوجد توصيل إلى جميع المحافظات."
+      deliveryNote: "يوجد توصيل إلى جميع المحافظات.",
+      bannerIntervalSec: 7
     },
     banners: [],
     categories: [
@@ -59,6 +62,32 @@ async function loadDefaults() {
       { slug: "accessories", name: "إكسسوارات" }
     ],
     products: []
+  };
+}
+
+function normalizeData(data) {
+  const fallback = {
+    settings: {
+      storeName: "متجر طيف",
+      description: "كتب ومنتجات مختارة بعناية.",
+      email: "",
+      whatsapp: "",
+      instagram: "",
+      deliveryNote: "يوجد توصيل إلى جميع المحافظات.",
+      bannerIntervalSec: 7,
+    },
+    banners: [],
+    categories: [],
+    products: [],
+  };
+  const safe = data && typeof data === "object" ? data : {};
+  const settings = { ...fallback.settings, ...(safe.settings || {}) };
+  settings.bannerIntervalSec = Math.max(2, parseInt(settings.bannerIntervalSec, 10) || 7);
+  return {
+    settings,
+    banners: Array.isArray(safe.banners) ? safe.banners : fallback.banners,
+    categories: Array.isArray(safe.categories) ? safe.categories : fallback.categories,
+    products: Array.isArray(safe.products) ? safe.products : fallback.products,
   };
 }
 
@@ -77,9 +106,17 @@ export default async (req, context) => {
     try {
       let data = await store.get(KEY, { type: "json" });
       if (!data) {
-        data = await loadDefaults();
-        // نحفظ البيانات الافتراضية في أول طلب لتصبح قابلة للتعديل
-        await store.setJSON(KEY, data);
+        const backup = await store.get(BACKUP_KEY, { type: "json" });
+        if (backup) {
+          data = normalizeData(backup);
+          await store.setJSON(KEY, data);
+        } else {
+          data = normalizeData(await loadDefaults());
+          await store.setJSON(KEY, data);
+          await store.setJSON(BACKUP_KEY, data);
+        }
+      } else {
+        data = normalizeData(data);
       }
       return new Response(JSON.stringify(data), {
         status: 200,
@@ -132,8 +169,19 @@ export default async (req, context) => {
       }), { status: 400, headers: CORS_HEADERS });
     }
 
+    body = normalizeData(body);
+
     try {
+      const current = await store.get(KEY, { type: "json" });
+      if (current) {
+        await store.setJSON(PREV_BACKUP_KEY, normalizeData(current));
+      }
       await store.setJSON(KEY, body);
+      await store.setJSON(BACKUP_KEY, body);
+      const verify = await store.get(KEY, { type: "json" });
+      if (JSON.stringify(normalizeData(verify)) !== JSON.stringify(body)) {
+        throw new Error("تعذّر التحقق من ثبات البيانات بعد الحفظ");
+      }
       return new Response(JSON.stringify({ ok: true, savedAt: Date.now() }), {
         status: 200,
         headers: CORS_HEADERS,
