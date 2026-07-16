@@ -6,6 +6,7 @@
 
 <!-- ============================================================
      SEO Meta Tags (محرّكات البحث)
+     ⚠️ استبدل YOUR-SITE.netlify.app برابط موقعك الفعلي
      ============================================================ -->
 <title>متجر طيف | Tayf Store - كتب وعطورات وإكسسوارات مختارة</title>
 <meta name="description" content="متجر طيف - تشكيلة فاخرة من الكتب، العطورات، الإكسسوارات، والهدايا المختارة بعناية. أسعار مميّزة، توصيل لكل المحافظات، والطلب بسهولة عبر واتساب." />
@@ -16,7 +17,7 @@
 <meta name="language" content="Arabic" />
 <meta name="theme-color" content="#c9a24b" />
 <meta name="format-detection" content="telephone=yes" />
-<link rel="canonical" href="https://tayfstore.netlify.app/" />
+<link rel="canonical" href="https://YOUR-SITE.netlify.app/" />
 
 <!-- ============================================================
      Favicons & PWA Icons
@@ -35,8 +36,8 @@
 <meta property="og:site_name" content="متجر طيف" />
 <meta property="og:title" content="متجر طيف | Tayf Store - كتب وعطورات وإكسسوارات مختارة" />
 <meta property="og:description" content="تشكيلة فاخرة من الكتب، العطورات، الإكسسوارات والهدايا المختارة بعناية. اطلب بسهولة عبر واتساب." />
-<meta property="og:url" content="https://tayfstore.netlify.app/" />
-<meta property="og:image" content="https://tayfstore.netlify.app/assets/og-image.jpg" />
+<meta property="og:url" content="https://YOUR-SITE.netlify.app/" />
+<meta property="og:image" content="https://YOUR-SITE.netlify.app/assets/og-image.jpg" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content="شعار متجر طيف - Tayf Store" />
@@ -48,7 +49,7 @@
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="متجر طيف | Tayf Store" />
 <meta name="twitter:description" content="تشكيلة فاخرة من الكتب، العطورات، الإكسسوارات والهدايا المختارة بعناية." />
-<meta name="twitter:image" content="https://tayfstore.netlify.app/assets/og-image.jpg" />
+<meta name="twitter:image" content="https://YOUR-SITE.netlify.app/assets/og-image.jpg" />
 
 <!-- ============================================================
      Schema.org Structured Data (يساعد Google على فهم المتجر)
@@ -59,9 +60,9 @@
   "@type": "Store",
   "name": "متجر طيف",
   "alternateName": "Tayf Store",
-  "url": "https://tayfstore.netlify.app/",
-  "logo": "https://tayfstore.netlify.app/assets/logo.png",
-  "image": "https://tayfstore.netlify.app/assets/og-image.jpg",
+  "url": "https://YOUR-SITE.netlify.app/",
+  "logo": "https://YOUR-SITE.netlify.app/assets/logo.png",
+  "image": "https://YOUR-SITE.netlify.app/assets/og-image.jpg",
   "description": "متجر إلكتروني متخصّص بالكتب، العطورات، الإكسسوارات، والهدايا المختارة بعناية.",
   "address": {
     "@type": "PostalAddress",
@@ -82,11 +83,11 @@
   "@type": "WebSite",
   "name": "متجر طيف",
   "alternateName": "Tayf Store",
-  "url": "https://tayfstore.netlify.app/",
+  "url": "https://YOUR-SITE.netlify.app/",
   "inLanguage": "ar",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://tayfstore.netlify.app/#search/{search_term_string}",
+    "target": "https://YOUR-SITE.netlify.app/#search/{search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }
@@ -154,18 +155,15 @@ header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 8
 .chip.active{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
 
 .banner-area{margin-bottom:18px}
-.banner{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);min-height:200px;cursor:pointer}
+.banner{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);min-height:200px}
 .banner img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .banner .ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,12,.8),transparent)}
 .banner .txt{position:relative;padding:40px 28px;color:#fff;min-height:200px;display:flex;flex-direction:column;justify-content:flex-end}
-/* شرائح البانر (محمّلة مسبقاً — يمنع الاختفاء) */
-.banner-slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease;pointer-events:none}
-.banner-slide.active{opacity:1;pointer-events:auto}
 .banner .ey{color:var(--gold-soft);font-weight:700;font-size:12px;letter-spacing:.18em;text-transform:uppercase}
 .banner h2{font-size:clamp(22px,4vw,38px);margin:8px 0;color:#fff}
 .banner.empty{background:linear-gradient(120deg,#161618,#0b0b0c)}
 .banner-dots{display:flex;gap:6px;justify-content:center;margin-top:10px}
-.banner-dots i{width:7px;height:7px;border-radius:999px;background:var(--line);cursor:pointer}
+.banner-dots i{width:7px;height:7px;border-radius:999px;background:var(--line);cursor:default}
 .banner-dots i.active{background:var(--gold);width:22px}
 
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 16px;flex-wrap:wrap}
@@ -304,6 +302,7 @@ async function loadData(){
     if(!res.ok) throw new Error("HTTP "+res.status);
     const data = await res.json();
     SETTINGS = data.settings || {};
+    SETTINGS.bannerIntervalSec = Math.max(2, parseInt(SETTINGS.bannerIntervalSec,10) || 7);
     BANNERS = data.banners || [];
     CATEGORIES = data.categories || [];
     PRODUCTS = data.products || [];
@@ -394,38 +393,37 @@ function sidebarHTML(active){
 }
 
 let bannerIdx=0, bannerTimer=null;
+function bannerDelayMs(){
+  return Math.max(2, parseInt(SETTINGS.bannerIntervalSec,10) || 7) * 1000;
+}
+function stopBanner(){
+  if(bannerTimer){
+    clearInterval(bannerTimer);
+    bannerTimer=null;
+  }
+}
 function bannerHTML(){
   if(!BANNERS.length){
     return `<div class="banner-area"><div class="banner empty"><div class="txt">
       <div class="ey">${SETTINGS.storeName||""}</div>
       <h2>${SETTINGS.description||"أهلاً بك"}</h2></div></div></div>`;
   }
-  // نبني كل الشرائح مرّة واحدة في DOM — التبديل يكون بفأ CSS فقط
-  const slides = BANNERS.map((b, i) => `
-    <div class="banner-slide ${i===0?'active':''}" data-idx="${i}">
-      <img src="${b.image||""}" alt="" loading="${i===0?'eager':'lazy'}" onerror="this.style.display='none'">
-      <div class="ov"></div>
-      <div class="txt">
-        ${b.eyebrow ? `<div class="ey">${b.eyebrow}</div>` : ''}
-        ${b.title ? `<h2>${b.title}</h2>` : ''}
-      </div>
-    </div>`).join('');
-  const dots = BANNERS.length>1 ? `<div class="banner-dots">${BANNERS.map((_,i)=>`<i class="${i===0?'active':''}" onclick="showBanner(${i})"></i>`).join("")}</div>`:"";
+  const dots = BANNERS.length>1 ? `<div class="banner-dots">${BANNERS.map((_,i)=>`<i class="${i===0?'active':''}"></i>`).join("")}</div>`:"";
   return `<div class="banner-area">
-    <div class="banner" id="bannerBox" onclick="bannerClick()">${slides}</div>${dots}</div>`;
+    <div class="banner" id="bannerBox"></div>${dots}</div>`;
 }
 function renderBanner(){
-  const slides = document.querySelectorAll(".banner-slide");
-  if(!slides.length) return;
-  slides.forEach((s, i) => s.classList.toggle("active", i === bannerIdx));
+  const box=document.getElementById("bannerBox"); if(!box) return;
+  const b=BANNERS[bannerIdx]; if(!b) return;
+  box.innerHTML = `<img src="${b.image||""}" alt=""><div class="ov"></div>
+    <div class="txt">${b.eyebrow?`<div class="ey">${b.eyebrow}</div>`:''}
+    ${b.title?`<h2>${b.title}</h2>`:''}</div>`;
   document.querySelectorAll(".banner-dots i").forEach((d,i)=>d.classList.toggle("active",i===bannerIdx));
 }
-function showBanner(i){ bannerIdx=i; renderBanner(); startBanner(); }
-function bannerClick(){ const b=BANNERS[bannerIdx]; if(b&&b.link) location.hash=b.link.replace(/^#/,"#"); }
-function stopBanner(){ clearInterval(bannerTimer); bannerTimer=null; }
+function showBanner(i){ bannerIdx=i; renderBanner(); }
 function startBanner(){
   stopBanner();
-  if(BANNERS.length>1){ bannerTimer=setInterval(()=>{ bannerIdx=(bannerIdx+1)%BANNERS.length; renderBanner(); },5000); }
+  if(BANNERS.length>1){ bannerTimer=setInterval(()=>{ bannerIdx=(bannerIdx+1)%BANNERS.length; renderBanner(); }, bannerDelayMs()); }
 }
 
 function getList(mode, slug){
@@ -654,7 +652,6 @@ function renderFooter(){
 
 function route(){
   toggleSidebar(false);
-  // إيقاف مؤقّت البانر قبل أي توجيه (يمنع تراكم المؤقّتات)
   stopBanner();
   const h=location.hash.replace(/^#/,"");
   let active="";
