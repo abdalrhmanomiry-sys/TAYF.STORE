@@ -274,7 +274,12 @@ kbd{background:var(--elevated);border:1px solid var(--line);border-radius:5px;pa
             <input id="setDescription" class="field" placeholder="كتب ومنتجات مختارة">
           </div>
         </div>
-        <div class="row" style="margin-top:12px">
+        <div class="row cols-2" style="margin-top:12px">
+          <div>
+            <label class="label">مدة تبديل الإعلانات تلقائياً (بالثواني)</label>
+            <input id="setBannerInterval" type="number" min="2" step="1" class="field" dir="ltr" placeholder="7">
+            <div class="hint">القيمة الافتراضية 7 ثوانٍ. الحد الأدنى 2 ثانية. اللوحة الإعلانية لم تعد قابلة للنقر.</div>
+          </div>
           <div>
             <label class="label">ملاحظة التوصيل (تظهر في الفوتر وعند الشراء)</label>
             <textarea id="setDelivery" class="field" placeholder="يوجد توصيل إلى جميع المحافظات السورية."></textarea>
@@ -519,9 +524,9 @@ kbd{background:var(--elevated);border:1px solid var(--line);border-radius:5px;pa
     </div>
     <div class="row" style="margin-top:12px">
       <div>
-        <label class="label">رابط عند الضغط (اختياري)</label>
+        <label class="label">رابط عند الضغط (غير مستخدم حالياً)</label>
         <input id="mbLink" class="field" dir="ltr" placeholder="#category/perfumes">
-        <div class="hint">مثال: <kbd>#category/books</kbd> للذهاب إلى قسم الكتب، أو <kbd>#product/4</kbd> لمنتج محدد.</div>
+        <div class="hint">البانر في الموقع أصبح غير قابل للنقر، لذلك هذا الحقل محفوظ فقط للتوافق مع البيانات القديمة ولن يُستخدم في الواجهة.</div>
       </div>
     </div>
     <div class="modal-actions">
@@ -648,6 +653,7 @@ async function loadData(){
     DATA = await res.json();
     // ضمان وجود البنية
     DATA.settings = DATA.settings || {};
+    DATA.settings.bannerIntervalSec = Math.max(2, parseInt(DATA.settings.bannerIntervalSec,10) || 7);
     DATA.banners = DATA.banners || [];
     DATA.categories = DATA.categories || [];
     DATA.products = DATA.products || [];
@@ -1262,13 +1268,14 @@ function renderSettings(){
   const s=DATA.settings;
   $("setStoreName").value=s.storeName||"";
   $("setDescription").value=s.description||"";
+  $("setBannerInterval").value=Math.max(2, parseInt(s.bannerIntervalSec,10) || 7);
   $("setDelivery").value=s.deliveryNote||"";
   $("setWhatsapp").value=s.whatsapp||"";
   $("setInstagram").value=s.instagram||"";
   $("setEmail").value=s.email||"";
 }
 
-["setStoreName","setDescription","setDelivery","setWhatsapp","setInstagram","setEmail"].forEach(id=>{
+["setStoreName","setDescription","setBannerInterval","setDelivery","setWhatsapp","setInstagram","setEmail"].forEach(id=>{
   document.addEventListener("DOMContentLoaded",()=>{}); // ensures dom ready
 });
 function bindSettings(){
@@ -1280,6 +1287,11 @@ function bindSettings(){
       if(key==="storeName") $("storeNameLabel").textContent = "— "+(DATA.settings.storeName||"");
       updateDirty();
     });
+  });
+  $("setBannerInterval").addEventListener("input", e=>{
+    const v = Math.max(2, parseInt(e.target.value,10) || 7);
+    DATA.settings.bannerIntervalSec = v;
+    updateDirty();
   });
 }
 
@@ -1325,7 +1337,7 @@ async function resetAll(){
   try{
     // نُرسل بيانات افتراضية صغيرة
     const empty = {
-      settings: {storeName:"المتجر", description:"", email:"", whatsapp:"", instagram:"", deliveryNote:""},
+      settings: {storeName:"المتجر", description:"", email:"", whatsapp:"", instagram:"", deliveryNote:"", bannerIntervalSec:7},
       banners: [], categories: [], products: []
     };
     DATA = empty;
