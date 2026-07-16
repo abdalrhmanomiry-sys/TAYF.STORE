@@ -5,7 +5,8 @@
     "email": "store@example.com",
     "whatsapp": "9639xxxxxxxx",
     "instagram": "tayf_store",
-    "deliveryNote": "يوجد توصيل إلى جميع المحافظات السورية."
+    "deliveryNote": "يوجد توصيل إلى جميع المحافظات السورية.",
+    "bannerIntervalSec": 7
   },
   "banners": [
     {
@@ -22,24 +23,62 @@
     }
   ],
   "categories": [
-    {"slug": "books", "name": "كتب"},
-    {"slug": "accessories", "name": "إكسسوارات"},
-    {"slug": "clothing", "name": "ألبسة"},
-    {"slug": "perfumes", "name": "عطورات"},
-    {"slug": "incense", "name": "صمديات"},
-    {"slug": "gifts", "name": "هدايا"},
-    {"slug": "study", "name": "أدوات دراسة"},
-    {"slug": "toys", "name": "ألعاب"},
-    {"slug": "kitchen", "name": "أدوات مطبخ"},
-    {"slug": "silver", "name": "فضة"}
+    {
+      "slug": "books",
+      "name": "كتب"
+    },
+    {
+      "slug": "accessories",
+      "name": "إكسسوارات"
+    },
+    {
+      "slug": "clothing",
+      "name": "ألبسة"
+    },
+    {
+      "slug": "perfumes",
+      "name": "عطورات"
+    },
+    {
+      "slug": "incense",
+      "name": "صمديات"
+    },
+    {
+      "slug": "gifts",
+      "name": "هدايا"
+    },
+    {
+      "slug": "study",
+      "name": "أدوات دراسة"
+    },
+    {
+      "slug": "toys",
+      "name": "ألعاب"
+    },
+    {
+      "slug": "kitchen",
+      "name": "أدوات مطبخ"
+    },
+    {
+      "slug": "silver",
+      "name": "فضة"
+    }
   ],
   "products": [
     {
       "id": 1,
       "name": "كتاب الخيميائي",
       "category": "books",
-      "prices": {"SYP": 45000, "USD": 9, "TRY": 300},
-      "oldPrices": {"SYP": 60000, "USD": 12, "TRY": 400},
+      "prices": {
+        "SYP": 45000,
+        "USD": 9,
+        "TRY": 300
+      },
+      "oldPrices": {
+        "SYP": 60000,
+        "USD": 12,
+        "TRY": 400
+      },
       "availability": "in",
       "created": 1735000000000,
       "views": 420,
@@ -61,7 +100,11 @@
       "id": 2,
       "name": "كتاب العادات الذرية",
       "category": "books",
-      "prices": {"SYP": 55000, "USD": 11, "TRY": 360},
+      "prices": {
+        "SYP": 55000,
+        "USD": 11,
+        "TRY": 360
+      },
       "availability": "in",
       "created": 1734900000000,
       "views": 610,
@@ -80,7 +123,11 @@
       "id": 3,
       "name": "قلم فاخر مذهّب",
       "category": "accessories",
-      "prices": {"SYP": 30000, "USD": 6, "TRY": 200},
+      "prices": {
+        "SYP": 30000,
+        "USD": 6,
+        "TRY": 200
+      },
       "availability": "limited",
       "created": 1734980000000,
       "views": 150,
@@ -94,8 +141,16 @@
       "id": 4,
       "name": "عطر عود شرقي",
       "category": "perfumes",
-      "prices": {"SYP": 120000, "USD": 24, "TRY": 790},
-      "oldPrices": {"SYP": 150000, "USD": 30, "TRY": 990},
+      "prices": {
+        "SYP": 120000,
+        "USD": 24,
+        "TRY": 790
+      },
+      "oldPrices": {
+        "SYP": 150000,
+        "USD": 30,
+        "TRY": 990
+      },
       "availability": "in",
       "created": 1734800000000,
       "views": 300,
@@ -109,7 +164,11 @@
       "id": 5,
       "name": "محفظة جلدية",
       "category": "accessories",
-      "prices": {"SYP": 40000, "USD": 8, "TRY": 260},
+      "prices": {
+        "SYP": 40000,
+        "USD": 8,
+        "TRY": 260
+      },
       "availability": "in",
       "created": 1734990000000,
       "views": 90,
@@ -123,7 +182,11 @@
       "id": 6,
       "name": "شمعة معطرة",
       "category": "gifts",
-      "prices": {"SYP": 18000, "USD": 4, "TRY": 120},
+      "prices": {
+        "SYP": 18000,
+        "USD": 4,
+        "TRY": 120
+      },
       "availability": "in",
       "created": 1734700000000,
       "views": 60,
@@ -137,7 +200,11 @@
       "id": 7,
       "name": "طقم دفاتر دراسية",
       "category": "study",
-      "prices": {"SYP": 22000, "USD": 5, "TRY": 150},
+      "prices": {
+        "SYP": 22000,
+        "USD": 5,
+        "TRY": 150
+      },
       "availability": "in",
       "created": 1734960000000,
       "views": 40,
@@ -151,8 +218,16 @@
       "id": 8,
       "name": "كوب سيراميك",
       "category": "kitchen",
-      "prices": {"SYP": 15000, "USD": 3, "TRY": 100},
-      "oldPrices": {"SYP": 20000, "USD": 4, "TRY": 130},
+      "prices": {
+        "SYP": 15000,
+        "USD": 3,
+        "TRY": 100
+      },
+      "oldPrices": {
+        "SYP": 20000,
+        "USD": 4,
+        "TRY": 130
+      },
       "availability": "in",
       "created": 1734600000000,
       "views": 75,
