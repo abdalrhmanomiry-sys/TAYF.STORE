@@ -99,9 +99,15 @@ td .row-actions{display:flex;gap:6px;flex-wrap:wrap}
 
 /* Image manager */
 .images-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:10px}
-.img-tile{position:relative;aspect-ratio:1;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--elevated)}
+.img-tile{position:relative;aspect-ratio:1;border:2px solid var(--line);border-radius:10px;overflow:hidden;background:var(--elevated);transition:.2s}
 .img-tile img{width:100%;height:100%;object-fit:cover}
-.img-tile .img-x{position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:999px;background:rgba(0,0,0,.7);color:#fff;border:none;cursor:pointer;font-weight:700}
+.img-tile .img-x{position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:999px;background:rgba(0,0,0,.7);color:#fff;border:none;cursor:pointer;font-weight:700;font-size:14px;display:grid;place-items:center;z-index:2}
+.img-tile .img-star{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:999px;background:rgba(0,0,0,.7);color:#fff;border:none;cursor:pointer;font-size:14px;display:grid;place-items:center;z-index:2;transition:.2s}
+.img-tile .img-star:hover{background:var(--gold);color:#0b0b0c;transform:scale(1.1)}
+/* الصورة الرئيسية (الفهرس 0) */
+.img-tile.main{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,162,75,.25)}
+.img-tile.main .img-star{background:var(--gold);color:#0b0b0c;cursor:default}
+.img-tile .main-badge{position:absolute;bottom:4px;right:4px;left:4px;background:var(--gold);color:#0b0b0c;font-size:11px;font-weight:700;text-align:center;padding:3px 6px;border-radius:6px;z-index:2}
 .img-add{display:flex;gap:6px;margin-top:10px}
 .img-add input{flex:1}
 
@@ -800,10 +806,26 @@ function closeProductModal(){ $("modalProduct").classList.remove("open"); }
 function renderProductImages(){
   const wrap=$("mpImagesList"); wrap.innerHTML="";
   mpImages.forEach((src,i)=>{
-    const tile=document.createElement("div"); tile.className="img-tile";
-    tile.innerHTML=`<img src="${src}" onerror="this.style.opacity=.3"><button class="img-x" title="حذف" onclick="removeProductImage(${i})">×</button>`;
+    const tile=document.createElement("div");
+    const isMain = (i === 0);
+    tile.className = "img-tile" + (isMain ? " main" : "");
+    tile.innerHTML = `
+      <img src="${src}" onerror="this.style.opacity=.3">
+      <button class="img-star" title="${isMain ? 'هذه هي الصورة الرئيسية' : 'اجعلها الصورة الرئيسية'}" onclick="setMainImage(${i})">${isMain ? '★' : '☆'}</button>
+      <button class="img-x" title="حذف" onclick="removeProductImage(${i})">×</button>
+      ${isMain ? '<div class="main-badge">الصورة الرئيسية</div>' : ''}
+    `;
     wrap.appendChild(tile);
   });
+}
+
+/* يجعل الصورة في الفهرس i هي الرئيسية (الفهرس 0) */
+function setMainImage(i){
+  if(i < 0 || i >= mpImages.length || i === 0) return;
+  const chosen = mpImages.splice(i, 1)[0];
+  mpImages.unshift(chosen);
+  renderProductImages();
+  toast("★ تم تعيين الصورة الرئيسية", "success");
 }
 function addProductImage(){
   const url=$("mpImgInput").value.trim();
@@ -1347,6 +1369,6 @@ document.querySelectorAll(".modal-bg").forEach(m=>{
   }
 })();
 </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
